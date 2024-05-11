@@ -1,0 +1,322 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+
+:root {
+    --strong-orange: rgb(247, 110, 17);
+    --mid-orange: rgb(255, 159, 69);
+    --light-orange: rgb(255, 188, 128);
+    --red: rgb(252, 79, 79);
+    --heading-font: "Nunito Sans", sans-serif;
+    --text-font: "Nunito", sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100dvh;
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    grid-template-rows: 84px 1fr 10vh;
+    font-family: var(--text-font);
+    color: #222222;
+}
+
+img {
+    width: 80%;
+    min-width: 200px;
+    align-self: center;
+}
+
+input, label, textarea, select {
+    vertical-align: center;
+    appearance: none;
+    font-family: var(--text-font);
+    margin:0;
+    background-color: white;
+    vertical-align: middle;
+	border: 1px solid var(--mid-orange);
+	padding:0.25em 0.5em;
+	line-height:1;
+	font-size:17px;
+    border-radius: 4px;
+    &:focus {
+        outline: 1px solid var(--light-orange);
+    }
+}
+
+button:active {
+    transform: translateY(3px);
+}
+
+button:hover {
+    outline: 2px solid var(--light-orange);
+}
+
+.newTaskForm {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    padding: 30px;
+    border-radius: 10px;
+    border: solid 2px var(--mid-orange);
+    gap: 0.5em;
+    background-color: var(--light-orange);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
+    button {
+        border: solid 1px var(--mid-orange);
+        border-radius: 5px;
+        height: 30px;
+        font-weight: bold;
+    }
+    #addBtn {
+        color: white;
+        background-color: var(--red);
+        height: 40px;
+    }
+    #cancelBtn {
+        margin-top: 20px;
+        color: var(--strong-orange);
+        background-color: white;
+    }
+    input[type=checkbox] {
+        margin: 0 5px;
+        width: 1em;
+        height: 1em;
+        position: relative;
+        &:checked::before {
+            content: '✓';
+            font-weight: bold;
+            position: absolute;
+            color: var(--strong-orange);
+            left: 2px;
+            top: -9px;
+            font-size: 1.5em;
+        }
+    }
+    textarea {
+        padding: 0.6em 0.5em;
+    }
+    label {
+        border: none;
+        background-color: var(--light-orange);
+    }
+}
+
+
+.hide {
+    display: none;
+}
+
+.task {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 10px;
+    input[type=checkbox] {
+        width: 20px;
+        height: 20px;
+        position: relative;
+        &:checked::before {
+            content: '✓';
+            position: absolute;
+            color: var(--strong-orange);
+            left: 2px;
+            top: -12px;
+            font-size: 2em;
+        }
+    }
+    p {
+        font-size: 20px;
+        cursor: pointer;
+        flex: 1;
+        margin: 0 10px;
+        word-wrap: break-word;
+        width: 200px;
+    }
+    &.done p {
+        text-decoration: line-through;
+    }
+    .priority {
+        padding: 0 5px;
+        font-size: 17px;
+        font-weight: bold;
+        border-radius: 4px;
+        &.normal {
+            color: var(--mid-orange);
+            border: solid 1px var(--mid-orange);
+            box-shadow: 2px 2px 0px var(--mid-orange);
+        }
+        &.low {
+            color: var(--light-orange);
+            border: solid 1px var(--light-orange);
+            box-shadow: 2px 2px 0px var(--light-orange);
+        }
+        &.high {
+            color: var(--strong-orange);
+            border: solid 1px var(--strong-orange);
+            box-shadow: 2px 2px 0px var(--strong-orange);
+        }
+        &.urgent {
+            color: var(--red);
+            border: solid 1px var(--red);
+            box-shadow: 2px 2px 0px var(--red);
+        }
+
+    }
+    &:hover span {
+        display: inline;
+        svg {
+            width: 20px;
+            height: 20px;
+        }
+        path {
+            fill: var(--strong-orange);
+        }
+        margin: 0 5px;
+    }
+}
+
+
+.details {
+    flex: none;
+    width: 100%;
+    padding: 0 20px;
+    p {
+        font-size: 18px;
+        width: calc(100% - 60px);
+        margin: 15px 10px;
+    }
+    span {
+        margin: 0 10px;
+        padding: 0.1em 0.5em;
+        font-size: 15px;
+        font-weight: bold;
+        border-radius: 4px;
+        border: solid 1px var(--mid-orange);
+        color: var(--mid-orange);
+    }
+}
+
+nav {
+    grid-area: 1/2/2/-1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
+    transform: translateZ(0);
+    h1 {
+        font-family: var(--heading-font);
+        font-size: 1.6em;
+        font-weight: 700;
+        margin: 0;
+    }
+    #addTaskBtn {
+        width: fit-content;
+        height: 34px;
+        vertical-align: center;
+        font-size: 20px;
+        font-weight: bold;
+        background-color: var(--red);
+        color: white;
+        border-radius: 5px;
+        border: none;
+        padding: 0 15px;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
+    }
+}
+
+aside {
+    grid-area: 1/1/-1/2;
+    background-color: var(--strong-orange);
+    color: white;
+    .app-name {
+        color: white;
+        font-family: var(--heading-font);
+        font-size: 2em;
+        font-weight: bold;
+        margin: 15px;
+        text-align: center;
+        span {
+            font-weight: 900;
+        }
+    }
+    >.list {
+        list-style: none;
+        margin:35px 25px;
+        padding: 0;
+        font-weight: bold;
+        li {
+            margin: 3px 0;
+            &:has(span){
+                cursor: pointer;
+            }
+        }
+        span {
+            font-weight: 400;
+        }
+    }
+    .sub.list {
+        list-style: none;
+        font-weight: 400;
+        padding-left: 20px;
+    }
+    #newProjectBtn {
+        border: none;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        background-color: white;
+        color: var(--strong-orange);
+        font-weight: bolder;
+        font-size: 22px;
+        padding: 0;
+        margin: 0 5px;
+        line-height: 22px;
+        vertical-align: middle;
+    }
+    form {
+        margin: 10px 0;
+        input {
+           width: 90px;
+           height: 20px;
+        }
+        button {
+            background-color: var(--strong-orange);
+            color: white;
+            border: solid 1px white;
+            font-weight: bold;
+            height: 30px;
+            border-radius: 3px;
+        }
+    }
+}
+
+main {
+    padding: 15px;
+    grid-area: 2/2/3/-1;
+    background-color: white;
+    width: clamp(350px, 60vw, 700px);
+    justify-self: center;
+    h1 {
+        font-family: var(--heading-font);
+        color: var(--strong-orange);
+        font-size: 1.4em;
+    }
+}
+
+footer {
+    grid-area: 3/2/-1/-1;
+}
+
+section:has(img) {
+    .message {
+        text-align: center;
+        font-weight: 600;
+        font-size: clamp(20px, 1.5vw, 32px);
+    }
+    display: flex;
+    flex-direction: column;
+    height: 70vh;
+}
+
