@@ -26,7 +26,6 @@ body {
         display: flex;
         flex-direction: column;
         flex: 1;
-        height: 100vh;
         align-items: center;
     }
 }
@@ -49,12 +48,14 @@ input, label, textarea, select {
     }
 }
 
-button:active {
-    transform: translateY(3px);
-}
-
-button:hover {
-    outline: 2px solid var(--light-orange);
+button {
+    font-family: var(--text-font);
+    &:active {
+        transform: translateY(3px);
+    }
+    &:hover {
+        outline: 2px solid var(--light-orange);
+    }
 }
 
 .newTaskForm {
@@ -76,6 +77,7 @@ button:hover {
         border-radius: 5px;
         height: 30px;
         font-weight: bold;
+        font-size: 18px;
     }
     #addBtn {
         color: white;
@@ -253,12 +255,16 @@ aside {
         font-family: var(--heading-font);
         font-size: 2em;
         font-weight: bold;
+        height: 54px;
         margin: 0;
         text-align: center;
         span {
             text-shadow: 1px 1px var(--light-orange);
             font-weight: 900;
         }
+    }
+    .list {
+        font-size: 22px;
     }
     .filters>.list {
         list-style: none;
