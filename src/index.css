@@ -10,15 +10,25 @@
     --text-font: "Nunito", sans-serif;
 }
 
+* {
+    box-sizing: border-box;
+}
+
 body {
+    width: 100%;
+    height: 100vh;
+    display: flex;
     margin: 0;
     padding: 0;
-    height: 100dvh;
-    display: grid;
-    grid-template-columns: max-content 1fr;
-    grid-template-rows: 84px 1fr 10vh;
     font-family: var(--text-font);
     color: #222222;
+    >div {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        height: 100vh;
+        align-items: center;
+    }
 }
 
 img {
@@ -198,7 +208,7 @@ button:hover {
 }
 
 nav {
-    grid-area: 1/2/2/-1;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -227,7 +237,7 @@ nav {
 }
 
 aside {
-    grid-area: 1/1/-1/2;
+    min-width: max-content;
     background-color: var(--strong-orange);
     color: white;
     .app-name {
@@ -294,7 +304,6 @@ aside {
 
 main {
     padding: 15px;
-    grid-area: 2/2/3/-1;
     background-color: white;
     width: clamp(350px, 60vw, 700px);
     justify-self: center;
@@ -306,7 +315,6 @@ main {
 }
 
 footer {
-    grid-area: 3/2/-1/-1;
 }
 
 section:has(img) {
