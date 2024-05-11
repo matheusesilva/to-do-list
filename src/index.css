@@ -2,10 +2,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
 
 :root {
-    --strong-orange: rgb(247, 110, 17);
-    --mid-orange: rgb(255, 159, 69);
-    --light-orange: rgb(255, 188, 128);
-    --red: rgb(252, 79, 79);
+    --strong-orange: #f76e11;
+    --mid-orange: #ff9f45;
+    --light-orange: #ffbc80;
+    --red: #fc4f4f;
     --heading-font: "Nunito Sans", sans-serif;
     --text-font: "Nunito", sans-serif;
 }
@@ -31,13 +31,8 @@ body {
     }
 }
 
-img {
-    width: 80%;
-    min-width: 200px;
-    align-self: center;
-}
-
 input, label, textarea, select {
+    height: 28px;
     vertical-align: center;
     appearance: none;
     font-family: var(--text-font);
@@ -50,7 +45,7 @@ input, label, textarea, select {
 	font-size:17px;
     border-radius: 4px;
     &:focus {
-        outline: 1px solid var(--light-orange);
+        outline: 2px solid var(--light-orange);
     }
 }
 
@@ -68,10 +63,14 @@ button:hover {
     margin-top: 10px;
     padding: 30px;
     border-radius: 10px;
-    border: solid 2px var(--mid-orange);
     gap: 0.5em;
     background-color: var(--light-orange);
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(135deg, var(--strong-orange) 0%, var(--mid-orange) 70%);
+    border: solid 2px var(--mid-orange); 
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.25);
+    &:hover {
+        border: solid 2px var(--red); 
+    }
     button {
         border: solid 1px var(--mid-orange);
         border-radius: 5px;
@@ -87,6 +86,11 @@ button:hover {
         margin-top: 20px;
         color: var(--strong-orange);
         background-color: white;
+    }
+    label:has(input[type=checkbox]) {
+        display: flex;
+        align-items: center;
+        background-color: transparent;
     }
     input[type=checkbox] {
         margin: 0 5px;
@@ -104,7 +108,9 @@ button:hover {
         }
     }
     textarea {
-        padding: 0.6em 0.5em;
+        padding: 0.4em 0.5em;
+        line-height: 1.4em;
+        height: 84px;
     }
     label {
         border: none;
@@ -239,27 +245,34 @@ nav {
 aside {
     min-width: max-content;
     background-color: var(--strong-orange);
+    background: linear-gradient(45deg, var(--red) 0%, var(--strong-orange) 45%);
     color: white;
+    padding: 25px;
     .app-name {
         color: white;
         font-family: var(--heading-font);
         font-size: 2em;
         font-weight: bold;
-        margin: 15px;
+        margin: 0;
         text-align: center;
         span {
+            text-shadow: 1px 1px var(--light-orange);
             font-weight: 900;
         }
     }
-    >.list {
+    .filters>.list {
         list-style: none;
-        margin:35px 25px;
+        margin-top: 35px;
+        margin-bottom: 35px;
         padding: 0;
         font-weight: bold;
         li {
             margin: 3px 0;
             &:has(span){
                 cursor: pointer;
+                &:hover {
+                    text-decoration: var(--light-orange) wavy underline;
+                }
             }
         }
         span {
@@ -289,7 +302,7 @@ aside {
         margin: 10px 0;
         input {
            width: 90px;
-           height: 20px;
+           height: 30px;
         }
         button {
             background-color: var(--strong-orange);
@@ -307,7 +320,7 @@ main {
     background-color: white;
     width: clamp(350px, 60vw, 700px);
     justify-self: center;
-    h1 {
+    h2 {
         font-family: var(--heading-font);
         color: var(--strong-orange);
         font-size: 1.4em;
@@ -321,10 +334,55 @@ section:has(img) {
     .message {
         text-align: center;
         font-weight: 600;
-        font-size: clamp(20px, 1.5vw, 32px);
+        font-size: clamp(20px, 1.5vw, 30px);
+    }
+    img {
+        width: 80%;
+        min-width: 200px;
+        max-width: 350px;
+        align-self: center;
     }
     display: flex;
     flex-direction: column;
     height: 70vh;
+}
+section:not(:has(.task)) {
+    margin-top: 15vh;
+}
+
+@media screen and (max-width: 570px) {
+    body {
+        position: relative;
+        display: block;
+    }
+    aside {
+        padding: 15px 25px;
+        .app-name {
+            text-align: left;
+        }
+        .filters {
+            margin: 0 30px;
+            h3 {
+                margin: 0;
+                line-height: 84px;
+                position: absolute;
+                right: 25px;
+                top: 0px;
+            }
+            ul {
+                display: none;
+                margin: 20px;
+            }
+        } 
+    }
+    main {
+        width: 100%;
+    }
+    section h2:nth-child(1) {
+        margin-top: 0px;
+    }
+    .newTaskForm {
+        margin: 20px;
+    }
 }
 

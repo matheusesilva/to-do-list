@@ -210,7 +210,7 @@ const screen = (function () {
         }
         for (let i = 0; i < tasksList.length; i++) {
             if (i === 0 || tasksList[i].dueDate.toDateString() !== tasksList[i-1].dueDate.toDateString()) {
-                const date = document.createElement('h1');
+                const date = document.createElement('h2');
                 if (tasksList[i].dueDate.toDateString() === today) {
                     date.textContent = 'Today';
                 } else {
@@ -288,6 +288,18 @@ const screen = (function () {
             const name = document.querySelector('#name').value;
             project.create(name);
         });
+
+        const filterToggle = document.querySelector('aside h3');
+        filterToggle.addEventListener('click', () => {
+            document.querySelectorAll('.filters>ul').forEach(item => {
+                if (item.style.display === 'none' || item.style.display === '') {
+                    item.style.display = 'initial';
+                } else {
+                    item.style.display = 'none';
+                }
+            })
+        });
+
     }
     const cleanTasks = () => {
         document.querySelector('#tasks').replaceChildren();
@@ -295,7 +307,7 @@ const screen = (function () {
     const emptyMessage = (keyword) => {
         const taskSection = document.querySelector('section#tasks');
         const msg = document.createElement('p');
-        msg.textContent = 'Congratulations! You woofed all your tasks!';
+        msg.textContent = 'Congratulations! You woofed all your tasks from this list!';
         msg.classList.add('message');
         const img = new Image();
         img.src = emptyImage;

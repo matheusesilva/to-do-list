@@ -9,28 +9,31 @@
 <body>
     <aside>
         <div class="app-name"><span>Woof</span>.it</div>
-        <ul class="list">
-            <li id="all">All tasks <span></span></li>
-            <li id="overdue">Overdue <span></span></li>
-            <li id="today">Today <span></span></li>
-            <li id="this-week">This Week <span></span></li>
-            <li id="this-month">This Month <span></span></li>
-        </ul>
-        <ul class="list">
-            <li>My projects
-                <button type="button" id="newProjectBtn">&#43</button>
-            </li>
-            <li>
-                <form action="" class="newProjectForm hide">
-                    <label for="name" hidden>Project Name</label>
-                    <input type="text" id="name" placeholder="Name" required>
-                    <button type="button" id="addProjectBtn">Add</button>
-                </form>
-            </li>
-            <ul class="sub list">
-                
+        <div class="filters">
+            <h3>Filters</h3>
+            <ul class="list">
+                <li id="all">All tasks <span></span></li>
+                <li id="overdue">Overdue <span></span></li>
+                <li id="today">Today <span></span></li>
+                <li id="this-week">This Week <span></span></li>
+                <li id="this-month">This Month <span></span></li>
             </ul>
-        </ul>
+            <ul class="list">
+                <li>My projects
+                    <button type="button" id="newProjectBtn">&#43</button>
+                </li>
+                <li>
+                    <form action="" class="newProjectForm hide">
+                        <label for="name" hidden>Project Name</label>
+                        <input type="text" id="name" placeholder="Name" required>
+                        <button type="button" id="addProjectBtn">Add</button>
+                    </form>
+                </li>
+                <ul class="sub list">
+            
+                </ul>
+            </ul>
+        </div>
     </aside>
     <div>
         <nav>
@@ -53,7 +56,7 @@
                 </select>
                 <label for="projetc" hidden>Project</label>
                 <select name="project" id="project">
-                    <option value="" selected>No project related</option>
+                    <option value="" selected>Select the project (optional)</option>
                 </select>
                 <textarea name="description" id="description" cols="20" rows="5" placeholder="You can write some additional information here!"></textarea>
                 <label for="isDone">Is already finished?
