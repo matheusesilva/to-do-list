@@ -1,7 +1,7 @@
 import './index.css';
 import emptyImage from './empty.jpg';
 import { saveLocal, getLocal } from './webstorage.js';
-import { startOfDay, isToday, isBefore, isThisWeek, isThisMonth } from "date-fns";
+import { startOfDay, isToday, isTomorrow, isBefore, isThisWeek, isThisMonth } from "date-fns";
 
 const task = (function() {
     let tasks = [];
@@ -10,28 +10,35 @@ const task = (function() {
     if (getLocal('tasks') !== null) {
         tasks = getLocal('tasks');
     }
-    const create = (taskData) => {
+    const create = (taskObj) => {
         const id = generateId('task');
-        const title = taskData.title;
-        const description = taskData.description;
-        console.log(taskData.dueDate);
-        const dueDate = startOfDay(new Date(taskData.dueDate + ' EDT'));
-        const priority = taskData.priority;
-        const isDone = taskData.isDone;
-        const projects = [];
-        if (taskData.project !== '') {
-            const relatedProject = project.all().find((entry) => entry.id === taskData.project);
-            projects.push(relatedProject);
-        }
+        const title = taskObj.title;
+        const description = taskObj.description;
+        const dueDate = startOfDay(new Date(taskObj.dueDate + ' EDT'));
+        const priority = taskObj.priority;
+        const isDone = taskObj.isDone;
+        const projects = project.find(taskObj.projects);
         const newTask = {id, title, description, dueDate, priority, isDone, projects}
         tasks.push(newTask);
 
         // Backup the tasks to the local storage
         saveLocal('tasks', task.all());
-        console.log(task.all());
-        console.log(`Task ${id} was added to the list`);
+        taskForm.close();
+        screen.loadTasks();
         return newTask
     };
+    const edit = (taskObj) => {
+        tasks.forEach(item => {
+            if (item.id === taskObj.id) {
+                const date = startOfDay(new Date(taskObj.dueDate + ' EDT'));
+                const projectList = project.find(taskObj.projects);
+                Object.assign(item, taskObj, { dueDate: date }, { projects: projectList});
+                saveLocal('tasks', task.all());
+                taskForm.close();
+                screen.loadTasks();
+            }
+        })
+    }
     const all = (status) => {
         let result;
         if (status === 'done') {
@@ -53,9 +60,11 @@ const task = (function() {
         });
     }
     const remove = (id) => {
-        const index = tasks.all().findIndex((item) => item.id = id);
-        console.log(index);
-        tasks.slice(index,1);
+        const index = task.all().findIndex(item => item.id === id);
+        tasks.splice(index,1);
+        saveLocal('tasks', task.all());
+        taskForm.close();
+        screen.loadTasks();
     }
     const filter = (keyword, status = 'all') => {
         let filteredList;
@@ -94,7 +103,7 @@ const task = (function() {
         }
         return filteredList
     }
-    return {create, all, remove, filter, toggleDone}
+    return {create, all, remove, filter, toggleDone, edit}
 })();
 
 const project =(function () {
@@ -118,7 +127,7 @@ const project =(function () {
         }
         const newProject = {id, title, getTasks, toggleTask};
         projects.push(newProject);
-        newTaskForm.loadProjects();
+        taskForm.loadProjects();
 
         // Backup the projects to the local storage
         saveLocal('projects', project.all());
@@ -139,35 +148,98 @@ const project =(function () {
         console.log(index);
         projects.slice(index,1);
     }
-    return {create, all, count, remove, names}
+    const find = (projectId) => {
+        let list = [];
+        function getObj (id) {
+            return project.all().find((item) => item.id === id)
+        }
+        switch (typeof projectId) {
+            case 'string':
+                list.push(getObj(projectId));
+                break;
+            case 'object':
+                projectId.forEach(id => list.push(getObj(id)))
+                break;
+        }
+        return list
+    }
+    return {create, all, count, remove, names, find}
 })();
 
-const newTaskForm = (function () {
-    // Get data from the new task form
+const taskForm = (function () {
+    const form = document.querySelector('form.task-form');
+    const dialog = document.querySelector('dialog');   
+    const newBtn = document.querySelector('#new-btn');
+    const cancelBtn = document.querySelector('#cancel-btn');
+    const deleteBtn = document.querySelector('#delete-btn');
+
+    // Add functionality to the buttons
+    const open = (mode, taskObj) => {
+        const submitBtn = document.querySelector('#submit');
+        switch (mode) {
+            case 'add':
+                submitBtn.textContent = 'Add';
+                deleteBtn.className = 'hide';
+                submitBtn.onclick = () => task.create(taskForm.getData());
+                break;
+            case 'edit':
+                taskForm.loadData(taskObj);
+                submitBtn.textContent = 'Save';
+                deleteBtn.className = '';
+                submitBtn.onclick = () => task.edit(taskForm.getData());
+                break;
+        }
+        //form.onsubmit = () => false;
+        dialog.showModal();
+    }
+    const close = () => {
+        form.reset();
+        dialog.close();
+    }
+    newBtn.addEventListener('click', () => open('add'));
+    cancelBtn.addEventListener('click', close);
+    deleteBtn.addEventListener('click', () => {
+        const taskId = document.querySelector('#task-id').value;
+        task.remove(taskId); 
+    });
+    
+    // Get data from the task form
     const getData = () => {
+        const id = document.querySelector('#task-id').value;
         const title = capitalize(document.querySelector('#title').value);
         const dueDate = document.querySelector('#dueDate').value;
         const priority = document.querySelector('#priority').value;
-        const project = document.querySelector('#project').value;
         const description = capitalize(document.querySelector('#description').value);
         const isDone = document.querySelector('#isDone').checked;
-        return {title, dueDate, priority, project, description, isDone}
+        const projects = [];
+        document.querySelectorAll('#project option').forEach(entry => {
+            if (entry.selected === true) {
+                projects.push(entry.value);
+            }
+        });
+        return {id, title, dueDate, priority, projects, description, isDone}
     }
-    // Add show and hide functionality to a button
-    const showHide = function(button) {
-        button.addEventListener('click', () => {
-            document.querySelector('.newTaskForm').classList.toggle('hide');
+
+    const loadData = (taskObj) => {
+        document.querySelector('#task-id').value = taskObj.id;
+        document.querySelector('#title').value = taskObj.title;
+        document.querySelector('#dueDate').value = taskObj.dueDate.toLocaleDateString();
+        document.querySelector('#priority').value = taskObj.priority;
+        document.querySelector('#description').value = taskObj.description;
+        document.querySelector('#isDone').checked = taskObj.isDone;
+
+        document.querySelectorAll('#project option').forEach(item => {
+            item.selected = false;
+        });
+        taskObj.projects.forEach(item => {
+            const option = `option[value=${item.id}]`;
+            document.querySelector(option).selected = true;
         });
     }
-    // Add create functionality to a button
-    const addTask = function(button) {
-        button.addEventListener('click', () => {
-            const taskData = newTaskForm.getData();
-            task.create(taskData);
-        });
-    }
+
     const loadProjects = () => {
         const projectSelection = document.querySelector('#project');
+        projectSelection.innerHTML = '<option value="" disabled>Pick a project (optional)</option>'
         project.all().forEach(project => {
             const option = document.createElement('option');
             option.value = project.id;
@@ -175,7 +247,8 @@ const newTaskForm = (function () {
             projectSelection.appendChild(option);     
         });
     }
-    return {showHide, getData, addTask, loadProjects};
+
+    return {getData, loadProjects, loadData, open, close};
 })();
 
 function capitalize (string) {
@@ -203,7 +276,6 @@ const screen = (function () {
 
         const tasksSection = document.querySelector('#tasks');
         const tasksList = (keyword === 'all') ? task.all() : task.filter(keyword);
-        const today = new Date().toDateString();
         const format = {weekday: 'long', month: 'short', day: 'numeric'};
         if (task.filter(keyword, 'notdone').length === 0) {
             screen.emptyMessage();
@@ -211,8 +283,10 @@ const screen = (function () {
         for (let i = 0; i < tasksList.length; i++) {
             if (i === 0 || tasksList[i].dueDate.toDateString() !== tasksList[i-1].dueDate.toDateString()) {
                 const date = document.createElement('h2');
-                if (tasksList[i].dueDate.toDateString() === today) {
+                if (isToday(tasksList[i].dueDate)) {
                     date.textContent = 'Today';
+                } else if (isTomorrow(tasksList[i].dueDate)) {
+                    date.textContent = 'Tomorrow';
                 } else {
                     date.textContent = tasksList[i].dueDate.toLocaleDateString('en-us',format)
                 };
@@ -256,7 +330,10 @@ const screen = (function () {
             priority.textContent = `#${tasksList[i].priority}`;
             const editIcon = document.createElement('span');
             editIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M1.439 16.873l-1.439 7.127 7.128-1.437 16.873-16.872-5.69-5.69-16.872 16.872zm4.702 3.848l-3.582.724.721-3.584 2.861 2.86zm15.031-15.032l-13.617 13.618-2.86-2.861 10.825-10.826 2.846 2.846 1.414-1.414-2.846-2.846 1.377-1.377 2.861 2.86z"/></svg>';
-            editIcon.classList.add('hide');
+            editIcon.addEventListener('click', (event) => {
+                const taskId = event.target.closest('.task').id;
+                taskForm.open('edit',task.filter(taskId));
+            });
             container.append(checkDone, taskTitle, priority, editIcon, details);
             tasksSection.append(container);
         }
@@ -267,6 +344,8 @@ const screen = (function () {
         const newProjectBtn = document.querySelector('#newProjectBtn');
         const addProjectBtn = document.querySelector('#addProjectBtn');
         const newProjectForm = document.querySelector('.newProjectForm');
+        
+        projectItens.textContent = '';
         project.all().forEach(entry => {
             projectItens.innerHTML += `<li id="${entry.id}">${entry.title} <span></span></li>`
         });
@@ -280,25 +359,29 @@ const screen = (function () {
                 item.firstElementChild.textContent = `(${task.filter(item.id, 'notdone').length})`;
             };
         });
-        newProjectBtn.addEventListener('click', () => {
+        newProjectBtn.onclick = () => {
             newProjectForm.classList.toggle('hide');
             document.querySelector('#name').focus();
-        })
-        addProjectBtn.addEventListener('click', () => {
+        }
+        addProjectBtn.onclick = () => {
             const name = document.querySelector('#name').value;
-            project.create(name);
-        });
+            if (name !== '') {
+                project.create(name);
+                document.querySelector('form.newProjectForm').reset();
+                screen.loadMenu();
+            }
+        }
 
         const filterToggle = document.querySelector('aside h3');
-        filterToggle.addEventListener('click', () => {
-            document.querySelectorAll('.filters>ul').forEach(item => {
+        filterToggle.onclick = () => {
+            document.querySelectorAll('.filters ul').forEach(item => {
                 if (item.style.display === 'none' || item.style.display === '') {
-                    item.style.display = 'initial';
+                    item.style.display = 'block';
                 } else {
                     item.style.display = 'none';
                 }
             })
-        });
+        }
 
     }
     const cleanTasks = () => {
@@ -313,16 +396,16 @@ const screen = (function () {
         img.src = emptyImage;
         taskSection.append(msg, img);
     }
+    const editTask = () => {
+    }
     return {loadTasks, loadMenu, cleanTasks, emptyMessage}
 })();
 
 // Attribute the functionalities to the forms buttons
-newTaskForm.showHide(document.querySelector('#addTaskBtn'));
-newTaskForm.showHide(document.querySelector('#cancelBtn'));
-newTaskForm.addTask(document.querySelector('#addBtn'));
+
 
 // Load existing projects to the list option
-newTaskForm.loadProjects();
+taskForm.loadProjects();
 screen.loadTasks();
 screen.loadMenu();
 

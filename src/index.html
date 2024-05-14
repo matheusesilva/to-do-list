@@ -23,7 +23,7 @@
                     <button type="button" id="newProjectBtn">&#43</button>
                 </li>
                 <li>
-                    <form action="" class="newProjectForm hide">
+                    <form class="newProjectForm hide">
                         <label for="name" hidden>Project Name</label>
                         <input type="text" id="name" placeholder="Name" required>
                         <button type="button" id="addProjectBtn">Add</button>
@@ -38,33 +38,37 @@
     <div>
         <nav>
             <h1 class="title">All tasks</h1>
-            <button type="button" id="addTaskBtn">+New</button>
+            <button type="button" id="new-btn">+New</button>
         </nav>
         <main>
-            <form action="" class="newTaskForm hide">
-                <label for="title" hidden>Task Title</label>
-                <input type="text" id="title" placeholder="Your task is..." required>
-                <label for="dueDate" hidden>Task Due Date</label>
-                <input type="text" id="dueDate" placeholder="What's the due date?" onfocus="(this.type='date')"
-                onblur="(this.type='text')" required>
-                <label for="priority" hidden>Task Priority</label>
-                <select name="priority" id="priority">
-                    <option value="low">Low Priority</option>
-                    <option value="normal" selected>Normal Priority</option>
-                    <option value="high">High Priority</option>
-                    <option value="urgent">Urgent</option>
-                </select>
-                <label for="projetc" hidden>Project</label>
-                <select name="project" id="project">
-                    <option value="" selected>Select the project (optional)</option>
-                </select>
-                <textarea name="description" id="description" cols="20" rows="5" placeholder="You can write some additional information here!"></textarea>
-                <label for="isDone">Is already finished?
-                    <input type="checkbox" name="" id="isDone">
-                </label>
-                <button type="button" id="cancelBtn">Cancel</button>
-                <button type="button" id="addBtn">Add</button>
-            </form>
+            <dialog>
+                <form class="task-form">
+                    <button type="button" id="cancel-btn">&#215</button>
+                    <input type="text" id="task-id" hidden>
+                    <label for="title" hidden>Task Title</label>
+                    <input type="text" id="title" placeholder="Your task is..." required>
+                    <label for="dueDate" hidden>Task Due Date</label>
+                    <input type="text" id="dueDate" placeholder="What's the due date?" onfocus="(this.type='date')"
+                    onblur="(this.type='text')" required>
+                    <label for="priority" hidden>Task Priority</label>
+                    <select name="priority" id="priority">
+                        <option value="low">Low Priority</option>
+                        <option value="normal" selected>Normal Priority</option>
+                        <option value="high">High Priority</option>
+                        <option value="urgent">Urgent</option>
+                    </select>
+                    <label for="projetc" hidden>Project</label>
+                    <select name="project" id="project" multiple>
+                        <option value="" disabled>Pick a project (optional)</option>
+                    </select>
+                    <textarea name="description" id="description" cols="20" rows="5" placeholder="You can write some additional information here!"></textarea>
+                    <label for="isDone">Is already finished?
+                        <input type="checkbox" name="" id="isDone">
+                    </label>
+                    <button type="button" id="delete-btn" class="hide">Delete Task</button>
+                    <button type="submit" id="submit">Add</button>
+                </form>
+            </dialog>
             <section id="tasks"></section>
         </main>
         <footer></footer>

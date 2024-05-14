@@ -16,7 +16,7 @@
 
 body {
     width: 100%;
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     margin: 0;
     padding: 0;
@@ -31,7 +31,7 @@ body {
 }
 
 input, label, textarea, select {
-    height: 28px;
+    height: 40px;
     vertical-align: center;
     appearance: none;
     font-family: var(--text-font);
@@ -42,7 +42,7 @@ input, label, textarea, select {
 	padding:0.25em 0.5em;
 	line-height:1;
 	font-size:17px;
-    border-radius: 4px;
+    border-radius: 7px;
     &:focus {
         outline: 2px solid var(--light-orange);
     }
@@ -58,7 +58,17 @@ button {
     }
 }
 
-.newTaskForm {
+dialog {
+    border: none;
+    background: transparent;
+    max-width: 100%;
+    padding: 0;
+    &::backdrop {
+        background: hsla(0, 0%, 0%, 0.2);
+    }
+}
+
+.task-form {
     display: flex;
     flex-direction: column;
     margin-top: 10px;
@@ -75,19 +85,20 @@ button {
     button {
         border: solid 1px var(--mid-orange);
         border-radius: 5px;
-        height: 30px;
+        height: 40px;
         font-weight: bold;
         font-size: 18px;
-    }
-    #addBtn {
         color: white;
         background-color: var(--red);
-        height: 40px;
     }
-    #cancelBtn {
-        margin-top: 20px;
-        color: var(--strong-orange);
-        background-color: white;
+    #submit, #delete-btn {
+    }
+    #cancel-btn {
+        height: 25px;
+        width: 25px;
+        padding: 0;
+        line-height: 1px;
+        align-self: end;
     }
     label:has(input[type=checkbox]) {
         display: flex;
@@ -109,10 +120,22 @@ button {
             font-size: 1.5em;
         }
     }
+    select {
+        &#project {
+            height: 80px;
+        }
+        &#priority {
+            appearance: auto;
+            padding-left: 5px;
+        }
+        &:focus option:checked, option:checked {
+            background-color: var(--light-orange);
+        }
+    }
     textarea {
         padding: 0.4em 0.5em;
         line-height: 1.4em;
-        height: 84px;
+        height: 100px;
     }
     label {
         border: none;
@@ -129,7 +152,10 @@ button {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    margin: 10px;
+    margin: 20px 10px;
+    padding: 8px;
+    gap: 10px;
+    border: 1px dotted var(--light-orange);
     input[type=checkbox] {
         width: 20px;
         height: 20px;
@@ -142,14 +168,18 @@ button {
             top: -12px;
             font-size: 2em;
         }
+        &:hover {
+            border: solid 2px var(--red);
+        }
     }
     p {
+        margin: 0;
         font-size: 20px;
         cursor: pointer;
         flex: 1;
-        margin: 0 10px;
         word-wrap: break-word;
-        width: 200px;
+        width: 100px;
+        line-height: 35px;
     }
     &.done p {
         text-decoration: line-through;
@@ -181,28 +211,40 @@ button {
         }
 
     }
-    &:hover span {
-        display: inline;
+    span:not(.priority) {
         svg {
             width: 20px;
             height: 20px;
+            display: block;
+            pointer-events: none;
         }
         path {
-            fill: var(--strong-orange);
+            fill: lightgray;
+            pointer-events: none;
         }
-        margin: 0 5px;
     }
+    &.done {
+        background-color: hsla(0, 0%, 75%, 0.1);
+    }
+    &:hover {
+        box-shadow: 1px 1px 5px #9191912e;
+    }
+}
+
+div.task span:hover path {
+    fill: var(--strong-orange);
 }
 
 
 .details {
+    border-top: 1px dotted var(--light-orange);
     flex: none;
     width: 100%;
-    padding: 0 20px;
+    padding: 0 20px 10px 20px;
     p {
         font-size: 18px;
         width: calc(100% - 60px);
-        margin: 15px 10px;
+        margin: 10px 10px;
     }
     span {
         margin: 0 10px;
@@ -220,7 +262,7 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px;
+    padding: 15px 25px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
     transform: translateZ(0);
     h1 {
@@ -229,7 +271,7 @@ nav {
         font-weight: 700;
         margin: 0;
     }
-    #addTaskBtn {
+    #new-btn {
         width: fit-content;
         height: 34px;
         vertical-align: center;
@@ -264,7 +306,7 @@ aside {
         }
     }
     .list {
-        font-size: 22px;
+        font-size: 20px;
     }
     .filters>.list {
         list-style: none;
@@ -301,7 +343,7 @@ aside {
         font-size: 22px;
         padding: 0;
         margin: 0 5px;
-        line-height: 22px;
+        line-height: 20px;
         vertical-align: middle;
     }
     form {
@@ -316,7 +358,7 @@ aside {
             border: solid 1px white;
             font-weight: bold;
             height: 30px;
-            border-radius: 3px;
+            border-radius: 7px;
         }
     }
 }
@@ -350,7 +392,6 @@ section:has(img) {
     }
     display: flex;
     flex-direction: column;
-    height: 70vh;
 }
 section:not(:has(.task)) {
     margin-top: 15vh;
@@ -380,6 +421,9 @@ section:not(:has(.task)) {
                 margin: 20px;
             }
         } 
+        form input {
+            width: 60%;
+        }
     }
     main {
         width: 100%;
@@ -387,7 +431,7 @@ section:not(:has(.task)) {
     section h2:nth-child(1) {
         margin-top: 0px;
     }
-    .newTaskForm {
+    .task-form {
         margin: 20px;
     }
 }
