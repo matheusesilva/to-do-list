@@ -24,6 +24,7 @@ const task = (function() {
         // Backup the tasks to the local storage
         saveLocal('tasks', task.all());
         taskForm.close();
+        screen.loadMenu();
         screen.loadTasks();
         return newTask
     };
@@ -66,11 +67,22 @@ const task = (function() {
         taskForm.close();
         screen.loadTasks();
     }
+    const removeProject = (id) => {
+        tasks.forEach(entry => {
+            for (let i = 0; i < entry.projects.length; i++) {
+                if (entry.projects[i].id === id) {
+                    entry.projects.splice(i, 1);
+                    i--;
+                }
+            }
+        })
+        saveLocal('tasks', task.all());
+    }
     const filter = (keyword, status = 'all') => {
         let filteredList;
         const today = startOfDay(new Date());
         switch (keyword) {
-            case 'all':
+            case 'all-tasks':
                 filteredList = task.all(status);
                 break;
             case 'overdue':
@@ -103,7 +115,7 @@ const task = (function() {
         }
         return filteredList
     }
-    return {create, all, remove, filter, toggleDone, edit}
+    return {create, all, remove, filter, toggleDone, edit, removeProject}
 })();
 
 const project =(function () {
@@ -144,9 +156,12 @@ const project =(function () {
         return list
     };
     const remove = (id) => {
-        const index = projects.all().findIndex((item) => item.id = id);
+        console.log(id);
+        const index = project.all().findIndex((item) => item.id = id);
         console.log(index);
-        projects.slice(index,1);
+        projects.splice(index,1);
+        task.removeProject(id);
+        saveLocal('projects', project.all());
     }
     const find = (projectId) => {
         let list = [];
@@ -176,6 +191,7 @@ const taskForm = (function () {
 
     // Add functionality to the buttons
     const open = (mode, taskObj) => {
+        taskForm.loadProjects();
         const submitBtn = document.querySelector('#submit');
         switch (mode) {
             case 'add':
@@ -214,9 +230,6 @@ const taskForm = (function () {
                     proj.scrollIntoView();
                 }
             })
-
-            // selectList.innerHTML = `<option value=${projObj.id} selected>${projObj.title}</option>` 
-            //                         + selectList.innerHTML
             projName.value = '';
         }
     }
@@ -269,8 +282,16 @@ const taskForm = (function () {
     return {getData, loadProjects, loadData, open, close};
 })();
 
-function capitalize (string) {
-    const formatedString = string.slice(0,1).toUpperCase().concat(string.slice(1));
+function capitalize (words) {
+    let formatedString;
+    if (typeof words === 'string') {
+        formatedString = words.slice(0,1).toUpperCase().concat(words.slice(1));
+    }  else if (typeof words === 'object') {
+        formatedString = [];
+        words.forEach(word => {
+            formatedString.push(capitalize(word));
+        })
+    }
     return formatedString
 }
 
@@ -289,11 +310,29 @@ function generateId (type) {
 }
 
 const screen = (function () {
-    const loadTasks = (keyword = 'all') => {
+    const loadTasks = (keyword = 'all-tasks') => {
         screen.cleanTasks();
 
         const tasksSection = document.querySelector('#tasks');
-        const tasksList = (keyword === 'all') ? task.all() : task.filter(keyword);
+        const pageTitle = document.querySelector('h1.title');
+        pageTitle.setAttribute('data-keyword', keyword);
+        const deleteProj = document.querySelector('#delete-project');
+        if (keyword.match(/P\d\d\d\d/i)) {
+            deleteProj.className = '';
+            deleteProj.onclick = () => {
+                project.remove(keyword);
+                screen.loadMenu();
+                screen.loadTasks();
+            };
+            const [{ title: titleName}] = project.find(keyword);
+            pageTitle.textContent = titleName + ' (' + task.filter(keyword, 'notdone').length + ')';
+        } else {
+            deleteProj.className = 'hide';
+            pageTitle.textContent = capitalize(keyword.split('-')).join(' ') + ' (' + task.filter(keyword, 'notdone').length + ')';
+        }
+        
+
+        const tasksList = (keyword === 'all-tasks') ? task.all() : task.filter(keyword);
         const format = {weekday: 'long', month: 'short', day: 'numeric'};
         if (task.filter(keyword, 'notdone').length === 0) {
             screen.emptyMessage();
@@ -323,6 +362,7 @@ const screen = (function () {
                 container.classList.toggle('done');
                 task.toggleDone(event.target.parentNode.id);
                 saveLocal('tasks', task.all());
+                screen.loadTasks(pageTitle.dataset.keyword);
             });
             taskTitle.textContent = tasksList[i].title;
             taskTitle.addEventListener('click', () => {
@@ -336,7 +376,7 @@ const screen = (function () {
             if (tasksList[i].description !== '') {
                 description.textContent = tasksList[i].description;
             } else {
-                description.textContent = 'There is no description for this task';
+                description.textContent = 'You can add a description here';
             }
             details.append(description);
             tasksList[i].projects.forEach(item => {
@@ -371,8 +411,8 @@ const screen = (function () {
         menuItens.forEach(item => {
             if (item.firstElementChild.matches('span')) {
                 item.addEventListener('click', () => {
-                    document.querySelector('h1.title').textContent = item.innerText;
                     screen.loadTasks(item.id);
+                    toggleFilters();
                 });
                 item.firstElementChild.textContent = `(${task.filter(item.id, 'notdone').length})`;
             };
@@ -390,16 +430,19 @@ const screen = (function () {
             }
         }
 
-        const filterToggle = document.querySelector('aside h3');
-        filterToggle.onclick = () => {
-            document.querySelectorAll('.filters ul').forEach(item => {
-                if (item.style.display === 'none' || item.style.display === '') {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
-            })
+        function toggleFilters () {
+            if (window.innerWidth < 570) {
+                document.querySelectorAll('.filters ul').forEach(item => {
+                    if (item.style.display === 'none' || item.style.display === '') {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                })
+            }
         }
+        const filterBtn = document.querySelector('aside h3');
+        filterBtn.onclick = () => toggleFilters();
 
     }
     const cleanTasks = () => {
@@ -418,9 +461,6 @@ const screen = (function () {
     }
     return {loadTasks, loadMenu, cleanTasks, emptyMessage}
 })();
-
-// Attribute the functionalities to the forms buttons
-
 
 // Load existing projects to the list option
 taskForm.loadProjects();

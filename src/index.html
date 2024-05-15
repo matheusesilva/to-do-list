@@ -12,7 +12,7 @@
         <div class="filters">
             <h3>Filters</h3>
             <ul class="list">
-                <li id="all">All tasks <span></span></li>
+                <li id="all-tasks">All tasks <span></span></li>
                 <li id="overdue">Overdue <span></span></li>
                 <li id="today">Today <span></span></li>
                 <li id="this-week">This Week <span></span></li>
@@ -38,7 +38,10 @@
     <div>
         <nav>
             <h1 class="title">All tasks</h1>
-            <button type="button" id="new-btn">New Task</button>
+            <div>
+                <button type="button" id="new-btn">New Task</button>
+                <button type="button" id="delete-project" class="hide">Delete</button>
+            </div>
         </nav>
         <main>
             <dialog>
@@ -58,7 +61,7 @@
                         <option value="urgent">Urgent</option>
                     </select>
                     <label for="project">The project is optional, pick one
-                        <select name="project" id="project" multiple></select>
+                        <select name="project" id="project" size="3" multiple></select>
                         ...or add a new one
                         <div>
                             <label for="new-project" hidden>New project name</label>
@@ -66,7 +69,7 @@
                             <button type="button">Add</button>
                         </div>
                     </label>
-                    <textarea name="description" id="description" cols="20" rows="5" placeholder="You can write some additional information here!"></textarea>
+                    <textarea name="description" id="description" cols="20" rows="5" placeholder="You may write some additional information here!"></textarea>
                     <label for="isDone">Is already finished?
                         <input type="checkbox" name="" id="isDone">
                     </label>
@@ -76,7 +79,6 @@
             </dialog>
             <section id="tasks"></section>
         </main>
-        <footer></footer>
     </div>
 </body>
 </html>
