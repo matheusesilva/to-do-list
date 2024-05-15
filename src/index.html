@@ -38,7 +38,7 @@
     <div>
         <nav>
             <h1 class="title">All tasks</h1>
-            <button type="button" id="new-btn">+New</button>
+            <button type="button" id="new-btn">New Task</button>
         </nav>
         <main>
             <dialog>
@@ -57,10 +57,15 @@
                         <option value="high">High Priority</option>
                         <option value="urgent">Urgent</option>
                     </select>
-                    <label for="projetc" hidden>Project</label>
-                    <select name="project" id="project" multiple>
-                        <option value="" disabled>Pick a project (optional)</option>
-                    </select>
+                    <label for="project">The project is optional, pick one
+                        <select name="project" id="project" multiple></select>
+                        ...or add a new one
+                        <div>
+                            <label for="new-project" hidden>New project name</label>
+                            <input type="text" id="new-project">
+                            <button type="button">Add</button>
+                        </div>
+                    </label>
                     <textarea name="description" id="description" cols="20" rows="5" placeholder="You can write some additional information here!"></textarea>
                     <label for="isDone">Is already finished?
                         <input type="checkbox" name="" id="isDone">

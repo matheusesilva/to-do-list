@@ -172,6 +172,7 @@ const taskForm = (function () {
     const newBtn = document.querySelector('#new-btn');
     const cancelBtn = document.querySelector('#cancel-btn');
     const deleteBtn = document.querySelector('#delete-btn');
+    const addProjBtn = document.querySelector('label[for=project] button');
 
     // Add functionality to the buttons
     const open = (mode, taskObj) => {
@@ -202,6 +203,23 @@ const taskForm = (function () {
         const taskId = document.querySelector('#task-id').value;
         task.remove(taskId); 
     });
+    addProjBtn.onclick = () => {
+        const projName = document.querySelector('label[for=project] input');
+        if (projName !== '') {
+            const projObj = project.create(projName.value);
+            const selectList = document.querySelectorAll('#project option');
+            selectList.forEach(proj => {
+                if (proj.value === projObj.id) {
+                    proj.selected = true;
+                    proj.scrollIntoView();
+                }
+            })
+
+            // selectList.innerHTML = `<option value=${projObj.id} selected>${projObj.title}</option>` 
+            //                         + selectList.innerHTML
+            projName.value = '';
+        }
+    }
     
     // Get data from the task form
     const getData = () => {
@@ -239,7 +257,7 @@ const taskForm = (function () {
 
     const loadProjects = () => {
         const projectSelection = document.querySelector('#project');
-        projectSelection.innerHTML = '<option value="" disabled>Pick a project (optional)</option>'
+        projectSelection.innerHTML = '';
         project.all().forEach(project => {
             const option = document.createElement('option');
             option.value = project.id;

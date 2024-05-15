@@ -105,6 +105,25 @@ dialog {
         align-items: center;
         background-color: transparent;
     }
+    label[for=project] {
+        height: max-content;
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        background-color: white;
+        line-height: 1.3em;
+        button {
+            background-color: var(--mid-orange);
+        }
+        div {
+            display: flex;
+            margin-top: 10px;
+            gap: 10px;
+            input {
+                width: 100%;
+            }
+        }
+    }
     input[type=checkbox] {
         margin: 0 5px;
         width: 1em;
@@ -123,6 +142,7 @@ dialog {
     select {
         &#project {
             height: 80px;
+            margin: 10px 0;
         }
         &#priority {
             appearance: auto;
@@ -142,7 +162,6 @@ dialog {
         background-color: var(--light-orange);
     }
 }
-
 
 .hide {
     display: none;
